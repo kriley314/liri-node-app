@@ -46,11 +46,12 @@ if ( command === "concert-this" ) {
     if ( process.argv.length < 4 ) {
       // For this command, if they don't specify a song, default!!  
       objectString = "The Sign Ace of Base";
-  } else {
-      objectString = process.argv[ 3 ];
-  }
+    } else {
+      objectString = process.argv.slice( 3 ).join( " " );
+    }
 
-  spotifyThisSong( objectString );
+    spotifyThisSong( objectString );
+
 } else if ( command === "movie-this" ) {
     if ( process.argv.length < 4 ) {
         // For this command, if they don't specify a song, default!!  
@@ -101,16 +102,29 @@ function spotifyThisSong( songName ) {
 function movieThis( theMovie ) {
 debugger;
     var queryUrl = "http://www.omdbapi.com/?t=" + theMovie + "&y=&plot=short&apikey=trilogy";
-console.log( "QueryURL: " + queryUrl );
+console.log( "QueryURL: " + queryUrl + "  Trying again.." );
 
-    axios.get( queryUrl )
-        .then( function( response ) {
-            debugger;
-            console.log( "Response: " + response.data );
-        })
-        .catch ( function( error ) {
-            console.error( error );
-        });
-    
+    axios.get( queryUrl ).then( function( response ) {
+        console.log( "Title:           " + response.data.Title + "\n" );
+        console.log( "Year:            " + response.data.Released + "\n" );
+
+        for ( let i = 0; i < response.data.Ratings.length; i++ ) {
+            if (( response.data.Ratings[ i ].Source === "Internet Movie Database" ) ||
+                ( response.data.Ratings[ i ].Source === "IMDB" )) {
+                // What the neck, allow for IMDB too..
+                console.log( "IMDB Rating:     " + response.data.Ratings[ i ].Value );
+            } else if ( response.data.Ratings[ i ].Source === "Rotten Tomatoes" ) {
+                console.log( "Rotten Tomatoes: " + response.data.Ratings[ i ].Value );
+            }
+        }
+
+        console.log( "Country:         " + response.data.Country + "\n" );
+        console.log( "Language:        " + response.data.Language + "\n" );
+        console.log( "Year:            " + response.data.Plot + "\n" );
+        console.log( "Actors:          " + response.data.Actors + "\n" );
+    })
+    .catch ( function( error ) {
+        console.error( error );
+    });
 }
 
