@@ -71,6 +71,12 @@ if ( command === "concert-this" ) {
 
     // And pass it in..
     doWhatItSays( doWhatItSaysFilename );
+} else if ( command === "?" ) {
+    // This will output all the possible commands.
+    console.log( "Valid use of liri:\n" );
+    console.log( "  node liri concert-this artistName\n" );
+    console.log( "  node liri spotify-this-song songName\n" );
+    console.log( "  node liri movie-this movieName\n" ); 
 } else {
     console.log( "Unrecognized liri command: " + command );
     console.log( "Valid commands are: concert-this, spotify-this-song, movie-this, and do-what-it-says.")
