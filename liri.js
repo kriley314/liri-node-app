@@ -77,6 +77,8 @@ if ( command === "concert-this" ) {
     console.log( "  node liri concert-this artistName\n" );
     console.log( "  node liri spotify-this-song songName\n" );
     console.log( "  node liri movie-this movieName\n" ); 
+    console.log( "  node liri do-what-it-says fileName\n\n" );
+    console.log( "Further detail on usage is found in the README.md file associated with this application.")
 } else {
     console.log( "Unrecognized liri command: " + command );
     console.log( "Valid commands are: concert-this, spotify-this-song, movie-this, and do-what-it-says.")
