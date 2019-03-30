@@ -26,9 +26,8 @@ This is a command line application and is used as follows:
 
     node liri movie-this Silverado
 
-  The do-what-it-says option allows the user to issue their command to liri through test in a file.  If no file name is specified, the
-  application looks for the file, random.txt.  The contents of this file can specify conna separated values to call the about liri
-  commands.  The default use of this command is:
+  The do-what-it-says option allows the user to issue their command to liri through text in a file.  If no file name is specified, the
+  application looks for the file, random.txt.  The contents of this file must specify comma separated values.  The default use of this command is:
 
     node liri do-what-it-says
 
@@ -36,6 +35,10 @@ This is a command line application and is used as follows:
   can use other file names with the command:
 
     node liri do-what-it-says random2.txt
+
+    Here is an examply on contents of this file:
+
+    concert-this,Elton John
 
   This application is built using information from BandsInTown, Spotify, and omdb.
 
