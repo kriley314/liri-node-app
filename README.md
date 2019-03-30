@@ -37,4 +37,6 @@ This is a command line application and is used as follows:
 
     node liri do-what-it-says random2.txt
 
+  This application is built using information from BandsInTown, Spotify, and omdb.
+
   
