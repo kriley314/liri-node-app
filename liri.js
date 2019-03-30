@@ -5,13 +5,14 @@
 //
 // LIRI will search 'Spotify' for songs, 'Bands in Town' for concerts, and 'OMDB' for movies.
 // 
-require("dotenv").config();
+require( "dotenv" ).config();
+var fs = require( "fs" );
 
-var keys = require("./key.js");
-var Spotify = require( "node-spotify-api");
-var spotify = new Spotify(keys.spotify);
-var axios = require("axios");
-var moment = require("moment")
+var keys = require( "./key.js" );
+var Spotify = require( "node-spotify-api" );
+var spotify = new Spotify( keys.spotify );
+var axios = require( "axios" );
+var moment = require( "moment" )
 
 // Be able to handle the following commands:
 //    * `concert-this`
@@ -29,17 +30,14 @@ if ( process.argv.length < 3 ) {
 var command = process.argv[ 2 ];
 var objectString;
 
-console.log( "Command: " + command + "   Length: " + command.length );
-debugger;
 if ( command === "concert-this" ) {
   if ( process.argv.length < 4 ) {
-      // Not valid!!  Must specify all paraameters..
+      // Not valid!!  Must specify all parameters..
       console.log( "Use of this tool: Please specify a concert artist following concert-this." );
       return;
   }
 
   objectString = process.argv.slice( 3 ).join( " " );
-  console.log( "objectString: " + objectString + "   Length: " + objectString.length );
   concertThis( objectString );
 } else if ( command === "spotify-this-song" ) {
 
@@ -59,13 +57,23 @@ if ( command === "concert-this" ) {
     } else {
         objectString = process.argv.slice( 3 ).join( "+" );
     }
-  
-    console.log( "objectString: " + objectString + "   Length: " + objectString.length );
+
     movieThis( objectString );
 } else if ( command === "do-what-it-says" ) {
-  doWhatItSays( objectString );
+    // Go ahead and see if we have an arg3..  If so, let's use THAT as the filename.  Otherwise,
+    // default to random.txt..
+    var doWhatItSaysFilename = "random.txt";
+    if ( process.argv.length > 3 ) {
+      // Apparently they want to override random - let's use it!!  I'm not going to tokenize things..
+      // Just see what they get..
+      doWhatItSaysFilename = process.argv[ 3 ];
+    }
+
+    // And pass it in..
+    doWhatItSays( doWhatItSaysFilename );
 } else {
-    console.log( "Unrecognized input: " + command );
+    console.log( "Unrecognized liri command: " + command );
+    console.log( "Valid commands are: concert-this, spotify-this-song, movie-this, and do-what-it-says.")
 }
 
 function concertThis( theArtist ) {
@@ -100,11 +108,10 @@ function spotifyThisSong( songName ) {
 
 // This assumes the movie name is passed in tokenized..
 function movieThis( theMovie ) {
-debugger;
     var queryUrl = "http://www.omdbapi.com/?t=" + theMovie + "&y=&plot=short&apikey=trilogy";
-console.log( "QueryURL: " + queryUrl + "  Trying again.." );
 
     axios.get( queryUrl ).then( function( response ) {
+        // We got our response!!  Output everything we want!!
         console.log( "Title:           " + response.data.Title + "\n" );
         console.log( "Year:            " + response.data.Released + "\n" );
 
@@ -125,6 +132,66 @@ console.log( "QueryURL: " + queryUrl + "  Trying again.." );
     })
     .catch ( function( error ) {
         console.error( error );
+    });
+}
+
+// This function will read the data from the file as specified by the input prameter.  The
+// contents of the file will then be parsed - comma separated - fed to liri as a single command.
+//   
+function doWhatItSays( doWhatItSaysFilename ) {
+
+    // Start by reading from the file, filename, passed in.
+    fs.readFile( doWhatItSaysFilename, "utf8", function( error, data ) {
+        if ( error ) {
+            return console.log( error );
+        }
+
+        if ( data.length === 0 ) {
+            console.log( "Input file must contain liri instrucion.\n" )
+        }
+                
+        var liriArguments = data.split( "," );
+        var command = liriArguments[ 0 ];    
+
+        // Start with "concert-this"..
+        if ( command  === "concert-this" ) {
+
+            if ( liriArguments.length < 2 ) {
+                // Not valid!!  Must specify all parameters..
+                console.log( "Use of this tool: Please specify a concert artist following concert-this." );
+                return;
+            }
+
+            // Since we broke apart based on commas, this will let it work if there
+            // happened to be a comma in the actual text..
+            objectString = liriArguments.slice( 1 ).join( "," );
+            concertThis( objectString );
+
+        } else if ( command === "spotify-this-song" ) {
+
+            if ( liriArguments.length < 2 ) {
+                // For this command, if they don't specify a song, default!!  
+                objectString = "The Sign Ace of Base";
+            } else {
+                // Since we broke apart based on commas, this will let it work if there
+                // happened to be a comma in the actual text..
+                objectString = liriArguments.slice( 1 ).join( "," );
+            }
+        
+            spotifyThisSong( objectString );
+        
+        } else if ( command === "movie-this" ) {
+
+            if ( liriArguments.length < 2 ) {
+                // For this command, if they don't specify a song, default!!  
+                objectString = "Mr.+Nobody";
+            } else {
+                objectString = liriArguments.slice( 1 ).join( "+" );
+            }
+            
+            console.log( "objectString: " + objectString + "   Length: " + objectString.length );
+            movieThis( objectString );
+        }
     });
 }
 
