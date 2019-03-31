@@ -42,4 +42,11 @@ This is a command line application and is used as follows:
 
   This application is built using information from BandsInTown, Spotify, and omdb.
 
+Links to images showing application showing example usage:
+
+https://github.com/kriley314/liri-node-app/blob/master/concert-this.jpg
+https://github.com/kriley314/liri-node-app/blob/master/spotify-this-song.jpg
+https://github.com/kriley314/liri-node-app/blob/master/movie-this.jpg
+https://github.com/kriley314/liri-node-app/blob/master/do-what-it-says.jpg
+
   
